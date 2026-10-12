@@ -1,487 +1,221 @@
-const primaryColors = [
-  { name: "Primary 500", hex: "#0d5d4f", accent: "#0d5d4f" },
-  { name: "Primary 400", hex: "#1d7a67", accent: "#1d7a67" },
-  { name: "Primary 300", hex: "#7db4a7", accent: "#7db4a7" },
-  { name: "Primary 200", hex: "#c2ddd4", accent: "#c2ddd4" },
-  { name: "Primary 100", hex: "#dfeae5", accent: "#dfeae5" },
+import { Show, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
+
+const courses = [
+  {
+    name: "Next.js for Production",
+    description: "Build scalable, high-performance web applications with Next.js.",
+    level: "Intermediate",
+    duration: "8h 24m",
+    modules: "12 modules",
+    icon: "N",
+    iconTone: "bg-[#1d2f2f] text-white",
+  },
+  {
+    name: "Docker Essentials",
+    description: "Containerize applications and streamline your development workflow.",
+    level: "Beginner",
+    duration: "10h 12m",
+    modules: "8 modules",
+    icon: "🐳",
+    iconTone: "bg-[#d7f0eb] text-[#1a725a]",
+  },
+  {
+    name: "TypeScript Deep Dive",
+    description: "Go beyond the basics and write safer, more expressive code.",
+    level: "Intermediate",
+    duration: "34h 36m",
+    modules: "10 modules",
+    icon: "TS",
+    iconTone: "bg-[#dbe7ff] text-[#2d5dcc]",
+  },
 ];
-
-const neutralColors = [
-  { name: "Neutral 900", hex: "#1b2b2a", accent: "#1b2b2a" },
-  { name: "Neutral 500", hex: "#334a49", accent: "#334a49" },
-  { name: "Neutral 700", hex: "#4e5e5a", accent: "#4e5e5a" },
-  { name: "Neutral 300", hex: "#d0d0d0", accent: "#d0d0d0" },
-  { name: "Neutral 200", hex: "#e6e6e3", accent: "#e6e6e3" },
-  { name: "Neutral 100", hex: "#f4f4f3", accent: "#f4f4f3" },
-  { name: "Neutral 50", hex: "#f7f7f3", accent: "#f7f7f3" },
-  { name: "White", hex: "#ffffff", accent: "#ffffff" },
-];
-
-const typeScale = [
-  { style: "Display 1", font: "Playfair Display", size: "48 / 56", weight: "Bold", usage: "Page titles" },
-  { style: "Display 2", font: "Playfair Display", size: "36 / 44", weight: "Bold", usage: "Section titles" },
-  { style: "Heading 1", font: "Inter", size: "28 / 36", weight: "Semi Bold", usage: "Card titles" },
-  { style: "Heading 2", font: "Inter", size: "22 / 30", weight: "Semi Bold", usage: "Sub section titles" },
-  { style: "Heading 3", font: "Inter", size: "18 / 24", weight: "Medium", usage: "Small titles" },
-  { style: "Body Large", font: "Inter", size: "16 / 24", weight: "Regular", usage: "Body copy" },
-  { style: "Body", font: "Inter", size: "14 / 20", weight: "Regular", usage: "Supporting text" },
-  { style: "Small", font: "Inter", size: "12 / 16", weight: "Regular", usage: "Captions, meta" },
-];
-
-const spacingScale = [
-  { step: 4, size: "4px", label: "4" },
-  { step: 8, size: "8px", label: "8" },
-  { step: 12, size: "12px", label: "12" },
-  { step: 16, size: "16px", label: "16" },
-  { step: 24, size: "24px", label: "24" },
-  { step: 32, size: "32px", label: "32" },
-  { step: 40, size: "40px", label: "40" },
-  { step: 48, size: "48px", label: "48" },
-  { step: 64, size: "64px", label: "64" },
-];
-
-const radiusValues = [
-  { label: "4px", value: 4 },
-  { label: "8px", value: 8 },
-  { label: "12px", value: 12 },
-  { label: "16px", value: 16 },
-  { label: "24px", value: 24 },
-  { label: "Full", value: 9999 },
-];
-
-const shadows = [
-  { label: "Sm", css: "0 4px 10px rgba(0,0,0,0.08)" },
-  { label: "Md", css: "0 4px 20px rgba(0,0,0,0.12)" },
-  { label: "Lg", css: "0 12px 28px rgba(0,0,0,0.12)" },
-  { label: "Xl", css: "0 20px 40px rgba(0,0,0,0.12)" },
-];
-
-const outlineIcons = ["◔", "⌕", "⧉", "◷", "↓", "☺", "▶", "↗", "⌂", "⋯"];
-const filledIcons = ["⚡", "↗", "◎", "★", "✓", "!", "•"];
-
-const buttonStates = {
-  primary: [
-    { label: "Default", className: "bg-[#0f6c5c] text-white border-[#0f6c5c]" },
-    { label: "Hover", className: "bg-[#0d5d4f] text-white border-[#0d5d4f]" },
-    { label: "Disabled", className: "bg-[#d5dfd9] text-[#7d8f8b] border-[#d5dfd9]" },
-  ],
-  secondary: [
-    { label: "Default", className: "bg-transparent text-[#0f6c5c] border-[#79a99b]" },
-    { label: "Hover", className: "bg-[#edf4f1] text-[#0f6c5c] border-[#79a99b]" },
-    { label: "Disabled", className: "bg-transparent text-[#7d8f8b] border-[#d5dfd9]" },
-  ],
-  tertiary: [
-    { label: "Default", className: "bg-transparent text-[#0f6c5c] border-transparent" },
-    { label: "Hover", className: "bg-[#edf4f1] text-[#0f6c5c] border-transparent" },
-    { label: "Disabled", className: "bg-transparent text-[#7d8f8b] border-transparent" },
-  ],
-};
-
-const statusLabels = ["In Progress", "Completed", "Now Playing", "Blocked"];
 
 function MinervaMark() {
   return (
-    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" aria-label="Minerva logo" className="h-8 w-8">
-      <path d="M5 23.5V9.5C5 7.567 6.567 6 8.5 6H12.5C14.433 6 16 7.567 16 9.5V13.5L23.5 6H25.5C27.433 6 29 7.567 29 9.5V23.5C29 25.433 27.433 27 25.5 27H23.5C21.567 27 20 25.433 20 23.5V18.5L12.5 26H8.5C6.567 26 5 24.433 5 22.5V23.5Z" fill="#0F6C5C" fillOpacity="0.15"/>
-      <path d="M2.5 22.5V8.5C2.5 6.567 4.067 5 6 5H9.5C11.433 5 13 6.567 13 8.5V13.5L18.5 8.5H20.5C22.433 8.5 24 10.067 24 12V22.5C24 24.433 22.433 26 20.5 26H18.5C16.567 26 15 24.433 15 22.5V17.5L9.5 23.5H6C4.067 23.5 2.5 21.933 2.5 20V22.5Z" fill="#0F6C5C"/>
-      <path d="M13 15.5V22.5C13 23.319 12.356 24 11.5 24H8.5C7.644 24 7 23.319 7 22.5V15.5C7 14.681 7.644 14 8.5 14H11.5C12.356 14 13 14.681 13 15.5Z" fill="#F5F5F3"/>
+    <svg width="28" height="28" viewBox="0 0 40 40" fill="none" aria-label="Minerva logo" className="h-7 w-7">
+      <path d="M20 2.5C11.7 3.3 5.4 7.5 3.1 13.8C0.4 21.2 5.8 30.2 12.2 34.6C14.9 36.5 18 38 20 38.5C22 38 25.1 36.5 27.8 34.6C34.2 30.2 39.6 21.2 36.9 13.8C34.6 7.5 28.3 3.3 20 2.5Z" fill="#26785D" />
+      <path d="M20 37C20 25.1 20 13.8 20 3.8M20 24.8C16.2 19.7 11.1 15.2 5 12.4M20 24.8C23.8 19.7 28.9 15.2 35 12.4" stroke="#F4F8F5" strokeWidth="2.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="search" className="h-6 w-6 text-[#1d2b2a]">
+      <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M12.5 12.5L17 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BellIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="notifications" className="h-5 w-5 text-[#1d2b2a]">
+      <path d="M10 2.75C7.311 2.75 5.25 4.811 5.25 7.5V9.304C5.25 10.204 4.987 11.09 4.503 11.842L3.3 13.5H16.7L15.497 11.842C15.013 11.09 14.75 10.204 14.75 9.304V7.5C14.75 4.811 12.689 2.75 10 2.75Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M8.25 15.25C8.612 16.357 9.166 17 10 17C10.834 17 11.388 16.357 11.75 15.25H8.25Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function SparkleIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-label="sparkle" className="h-4 w-4 text-[#0d5d4f]">
+      <path d="M8 1.5L9.2 5.8L13.5 7L9.2 8.2L8 12.5L6.8 8.2L2.5 7L6.8 5.8L8 1.5Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-label="arrow" className="h-5 w-5 text-white">
+      <path d="M4.75 11H16.25" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M11.25 6L16.25 11L11.25 16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function StarIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-label="star" className="h-4 w-4 text-[#0d5d4f]">
+      <path d="M8 1.5L9.66 5.34L13.5 7L9.66 8.66L8 12.5L6.34 8.66L2.5 7L6.34 5.34L8 1.5Z" fill="currentColor" />
     </svg>
   );
 }
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f0efee] px-6 py-8 text-[#1f2d2a]">
-      <div className="mx-auto max-w-[1220px] rounded-[8px] border border-[#d6d6d3] bg-[#f7f7f5] p-7 shadow-[0_8px_20px_rgba(34,42,39,0.04)]">
-        <header className="mb-8 flex items-start justify-between gap-10 border-b border-[#d8d8d4] pb-5">
-          <div className="flex items-center gap-3 pt-1">
+    <main className="min-h-screen bg-[#f1f3f1] px-5 py-7 text-[#242f2b] md:px-8 lg:px-10">
+      <div className="mx-auto max-w-[1440px]">
+        <header className="flex items-center justify-between border-b border-[#dfe7e2] pb-4">
+          <div className="flex items-center gap-3">
             <MinervaMark />
-            <div className="text-[2.1rem] font-medium tracking-[-0.06em] text-[#1d302d]">minerva</div>
+            <div className="text-[2.2rem] font-medium tracking-[-0.08em] text-[#1d2e2d]">minerva</div>
           </div>
-          <div className="mt-3 flex min-w-[420px] items-center justify-end gap-3 text-[0.7rem] uppercase tracking-[0.26em] text-[#455d5a]">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#0f6c5c] align-middle" />
-            <span>Colors</span>
+
+          <nav className="flex items-center gap-8 text-[0.98rem] text-[#4d625f]">
+            <button type="button" className="relative pb-2 font-medium text-[#1b2f2e] after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:rounded-full after:bg-[#0d5d4f]">
+              Cursos
+            </button>
+            <button type="button" className="font-medium text-[#3e5752]">Meu Aprendizado</button>
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <button type="button" className="flex h-10 w-10 items-center justify-center rounded-full border border-[#dfe7e2] bg-white/60 text-[#1d2b2a]">
+              <BellIcon />
+            </button>
+            <Show when="signed-out">
+              <div className="flex items-center gap-3 text-[0.9rem]">
+                <SignInButton>
+                  <button type="button" className="font-medium text-[#3e5752] hover:text-[#0d5d4f]">
+                    Entre
+                  </button>
+                </SignInButton>
+                <SignUpButton>
+                  <button type="button" className="rounded-[8px] bg-[#0d5d4f] px-4 py-2 font-medium text-white transition-colors hover:bg-[#0b4d45]">
+                    Cadastre-se
+                  </button>
+                </SignUpButton>
+              </div>
+            </Show>
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
           </div>
         </header>
 
-        <div className="grid grid-cols-[1.1fr_2.2fr] gap-10 pb-4">
-          <div className="pt-1">
-            <h1 className="font-[Georgia,serif] text-[4rem] leading-[0.9] tracking-[-0.06em] text-[#1e2a2b]">Design System</h1>
-            <p className="mt-5 max-w-[340px] text-[1.05rem] leading-[1.6] text-[#566d69]">
-              A unified design language for Minerva learning platform. Clean, modern and focused on clarity,
-              consistency and intuitive learning experiences.
+        <section className="relative mt-7 overflow-hidden rounded-[30px] border border-[#dfe7e2] bg-[#edf3ef] px-5 py-10 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.28)] md:px-10 lg:px-12">
+          <div className="absolute -left-[18%] top-[58%] h-[620px] w-[620px] rounded-full bg-[#dfece7] opacity-80" />
+          <div className="absolute -right-[12%] top-[48%] h-[620px] w-[620px] rounded-full bg-[#dfece7] opacity-80" />
+
+          <div className="relative z-10 mx-auto max-w-[880px] text-center">
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#acc8bf] bg-[#eef4f0] px-4 py-2 text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[#0d5d4f]">
+              <SparkleIcon />
+              <span>Aprendizado Inteligente</span>
+            </div>
+
+            <h1 className="mt-6 font-[Georgia,serif] text-[3.2rem] leading-[0.98] tracking-[-0.07em] text-[#1d2f2f] md:text-[5.1rem]">
+              Encontre a sua aula.
+              <span className="block">No idioma que preferir.</span>
+            </h1>
+
+            <p className="mx-auto mt-6 max-w-[720px] text-[1.1rem] leading-[1.6] text-[#526d69] md:text-[1.5rem]">
+              Minerva entende o que você quer aprender e encontra as aulas exatas em todos os seus cursos.
             </p>
-            <div className="mt-7 flex items-center gap-3 text-[0.72rem] uppercase tracking-[0.22em] text-[#3e5955]">
-              <span>Version 1.0.1</span>
-              <span className="text-[#5b6d6a]">•</span>
-              <span>May 2025</span>
-            </div>
+
+            <button
+              type="button"
+              className="mt-7 inline-flex items-center justify-center gap-3 rounded-[12px] bg-[#0d5d4f] px-7 py-4 text-[1.05rem] font-medium text-white shadow-[0_6px_18px_rgba(13,93,79,0.18)] transition-colors hover:bg-[#0b4d45]"
+            >
+              <span>Explore Cursos</span>
+              <ArrowIcon />
+            </button>
           </div>
 
-          <section className="pt-2">
-            <div className="mb-5 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[#3d534f]">
-              <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#0f6c5c]" />
-              <span>Primary</span>
+          <div className="relative z-10 mx-auto mt-10 max-w-[1000px] rounded-[18px] border border-[#dfe7e2] bg-white px-5 py-4 shadow-[0_6px_16px_rgba(16,32,30,0.03)]">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3 text-[#445d5a]">
+                <SearchIcon />
+                <span className="text-[1.05rem] text-[#718782]">Pergunte sobre o seu aprendizado...</span>
+              </div>
+              <div className="flex h-9 w-9 items-center justify-center rounded-md border border-[#dfe7e2] bg-[#f3f7f4] text-[0.7rem] font-medium text-[#1d2d2a]">
+                ⌘ K
+              </div>
             </div>
-            <div className="grid grid-cols-5 gap-3">
-              {primaryColors.map((color) => (
-                <div key={color.name} className="space-y-2">
-                  <div className="h-20 rounded-[6px] border border-[#dbe2df]" style={{ background: color.hex }} />
-                  <div className="text-[0.72rem] font-medium uppercase tracking-[0.08em] text-[#2d4d4a]">{color.name}</div>
-                  <div className="text-[0.7rem] text-[#566d69]">{color.hex.toUpperCase()}</div>
+          </div>
+        </section>
+
+        <section className="mt-12">
+          <div className="flex items-center justify-between gap-4 border-b border-[#dfe7e2] pb-4">
+            <h2 className="font-[Georgia,serif] text-[2.7rem] leading-none tracking-[-0.06em] text-[#1d2e2d]">Todos os cursos</h2>
+            <button type="button" className="text-[1.05rem] font-medium text-[#1d2f2f]">
+              Ver todos os cursos <span aria-hidden="true">→</span>
+            </button>
+          </div>
+
+          <div className="mt-7 grid gap-6 md:grid-cols-3">
+            {courses.map((course) => (
+              <article key={course.name} className="rounded-[18px] border border-[#dfe7e2] bg-[#f7f7f4] p-5 shadow-[0_1px_0_rgba(18,27,25,0.02)]">
+                <div className={`mb-6 flex h-16 w-16 items-center justify-center rounded-[12px] text-[2rem] font-semibold ${course.iconTone}`}>
+                  {course.icon}
                 </div>
+
+                <h3 className="font-[Georgia,serif] text-[2.2rem] leading-[1.08] tracking-[-0.05em] text-[#1d2d2d]">
+                  {course.name}
+                </h3>
+
+                <p className="mt-4 text-[1rem] leading-[1.6] text-[#566d69]">{course.description}</p>
+
+                <div className="mt-6 flex items-center gap-3 border-t border-[#dfe7e2] pt-4 text-[0.78rem] text-[#536d68]">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[#edf4f1] px-2 py-1 font-medium text-[#0d5d4f]">
+                    <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#0d5d4f]" />
+                    {course.level}
+                  </span>
+                  <span>{course.duration}</span>
+                  <span>{course.modules}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 flex items-center justify-center gap-3 border-t border-[#dfe7e2] pt-6 text-[0.92rem] text-[#536d68]">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#eaf3ef] text-[#0d5d4f]">
+              <StarIcon />
+            </span>
+            <span>Novos cursos e aulas adicionados toda semana.</span>
+          </div>
+
+          <div className="mt-8 h-28 overflow-hidden rounded-[18px] border border-[#dfe7e2] bg-[linear-gradient(180deg,#dfece7_0%,#edf4f0_100%)]">
+            <div className="flex h-full items-end justify-between px-3 pb-0">
+              {[48, 98, 80, 65, 120, 90, 70, 110, 58, 94, 76, 68, 130, 96, 84, 72, 106, 88, 75, 68].map((height, index) => (
+                <div
+                  key={index}
+                  className="w-[4.5%] rounded-t-[10px] bg-[#d1e7df] opacity-85"
+                  style={{ height: `${height}px` }}
+                />
               ))}
             </div>
-
-            <div className="mt-7 grid grid-cols-5 gap-3">
-              {neutralColors.map((color) => (
-                <div key={color.name} className="space-y-2">
-                  <div className="h-20 rounded-[6px] border border-[#dbe2df]" style={{ background: color.hex }} />
-                  <div className="text-[0.72rem] font-medium uppercase tracking-[0.08em] text-[#2d4d4a]">{color.name}</div>
-                  <div className="text-[0.7rem] text-[#566d69]">{color.hex.toUpperCase()}</div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className="mt-8 grid grid-cols-[1.15fr_2fr] gap-8 border-t border-[#d7d6d2] pt-8">
-          <section className="min-w-0">
-            <div className="mb-5 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[#3d534f]">
-              <span className="mr-1">02</span>
-              <span>Typography</span>
-            </div>
-            <div className="space-y-6">
-              <div className="flex items-baseline gap-5">
-                <div className="font-[Georgia,serif] text-[4.4rem] leading-none tracking-[-0.08em] text-[#1e2a2b]">Ag</div>
-                <div className="text-[0.78rem] uppercase tracking-[0.18em] text-[#55706d]">Elegant • Readable • Timeless</div>
-              </div>
-              <div className="flex items-baseline gap-5">
-                <div className="font-[Georgia,serif] text-[4.4rem] leading-none tracking-[-0.08em] text-[#1e2a2b] italic">Ag</div>
-                <div className="text-[0.78rem] uppercase tracking-[0.18em] text-[#55706d]">Clean • Modern • Highly legible</div>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.22em] text-[#3d534f]">
-              <span className="mr-1">03</span>
-              <span>Type Scale</span>
-            </div>
-            <div className="overflow-hidden rounded-[8px] border border-[#d7d6d2] bg-[#f7f7f5]">
-              <div className="grid grid-cols-[1.1fr_0.9fr_0.8fr_0.9fr] gap-3 border-b border-[#d7d6d2] px-4 py-3 text-[0.7rem] uppercase tracking-[0.14em] text-[#56706d]">
-                <span>Style</span>
-                <span>Font</span>
-                <span>Size / Line Height</span>
-                <span>Weight</span>
-                <span>Usage</span>
-              </div>
-              {typeScale.map((item) => (
-                <div key={item.style} className="grid grid-cols-[1.1fr_0.9fr_0.8fr_0.9fr] gap-3 border-b border-[#eceae7] px-4 py-3 last:border-b-0">
-                  <div className="font-medium text-[#1d2b2a]">{item.style}</div>
-                  <div className="text-[#4f625f]">{item.font}</div>
-                  <div className="text-[#4f625f]">{item.size}</div>
-                  <div className="text-[#4f625f]">{item.weight}</div>
-                  <div className="text-[#4f625f]">{item.usage}</div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className="mt-8 grid grid-cols-[1.3fr_2fr] gap-8 border-t border-[#d7d6d2] pt-8">
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">04</span>
-              <span>Spacing System</span>
-            </div>
-            <div className="flex items-end gap-2">
-              {spacingScale.map((space) => (
-                <div key={space.label} className="flex flex-col items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-[4px] border border-[#c7d6d0] bg-[#dfeae2] text-[0.65rem] text-[#22463f]">
-                    {space.label}
-                  </div>
-                  <div className="text-[0.63rem] text-[#67827d]">{space.size}</div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">05</span>
-              <span>Radius &amp; Shadows</span>
-            </div>
-            <div className="grid grid-cols-2 gap-5">
-              <div className="space-y-3">
-                <div className="text-[0.7rem] uppercase tracking-[0.2em] text-[#4b635f]">Radius</div>
-                <div className="flex items-end gap-3">
-                  {radiusValues.map((radius) => (
-                    <div key={radius.label} className="flex flex-col items-center gap-2">
-                      <div className="h-8 w-8 border border-[#cfd6d4] bg-[#edf3f0]" style={{ borderRadius: `${radius.value}px` }} />
-                      <span className="text-[0.62rem] text-[#5d7a76]">{radius.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="text-[0.7rem] uppercase tracking-[0.2em] text-[#4b635f]">Shadows</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {shadows.map((shadow) => (
-                    <div key={shadow.label} className="flex h-16 flex-col items-center justify-center rounded-[8px] border border-[#d9d9d4] bg-white text-center">
-                      <div className="h-8 w-16 rounded-[4px] bg-[#f5f5f2]" style={{ boxShadow: shadow.css }} />
-                      <span className="mt-2 text-[0.62rem] text-[#5d7a76]">{shadow.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-
-        <div className="mt-8 grid grid-cols-[1.1fr_2.1fr] gap-8 border-t border-[#d7d6d2] pt-8">
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">06</span>
-              <span>Icons</span>
-            </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <div className="text-[0.7rem] uppercase tracking-[0.18em] text-[#4d625f]">Outline Style</div>
-                <div className="grid grid-cols-5 gap-3">
-                  {outlineIcons.map((icon) => (
-                    <div key={icon} className="flex h-12 w-12 items-center justify-center rounded-[8px] border border-[#d9d9d4] bg-white text-lg text-[#1b2a2a]">
-                      {icon}
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="text-[0.7rem] uppercase tracking-[0.18em] text-[#4d625f]">Filled Style</div>
-                <div className="grid grid-cols-5 gap-3">
-                  {filledIcons.map((icon) => (
-                    <div key={icon} className="flex h-12 w-12 items-center justify-center rounded-[8px] bg-[#f1f1ef] text-lg text-[#1b2a2a]">
-                      {icon}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="mt-8 space-y-2 text-[0.7rem] text-[#56706d]">
-              <div className="font-medium uppercase tracking-[0.14em] text-[#466660]">Icon Specs</div>
-              <ul className="space-y-1 leading-relaxed">
-                <li>• 24x24px grid</li>
-                <li>• Stroke width 1.5px</li>
-                <li>• Rounded line caps</li>
-                <li>• Consistent optical balance</li>
-              </ul>
-            </div>
-          </section>
-
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">07</span>
-              <span>Buttons</span>
-            </div>
-            <div className="grid grid-cols-3 gap-5">
-              {Object.entries(buttonStates).map(([group, variants]) => (
-                <div key={group} className="space-y-3">
-                  {variants.map((variant) => (
-                    <button
-                      key={variant.label}
-                      className={`flex h-10 items-center justify-center rounded-[8px] border px-4 text-[0.74rem] font-medium uppercase tracking-[0.08em] ${variant.className} ${variant.label === "Default" ? "shadow-[0_1px_0_rgba(7,24,19,0.04)]" : ""} ${variant.label === "Disabled" ? "cursor-not-allowed opacity-80" : ""}`}
-                      type="button"
-                    >
-                      {group === "primary" ? "Primary" : group === "secondary" ? "Secondary" : "Tertiary"}
-                    </button>
-                  ))}
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex items-center gap-6 text-[0.7rem] text-[#56706d]">
-              <span>Button Specs</span>
-              <span>• Height: 44px</span>
-              <span>• Padding: 16px</span>
-              <span>• Radius: 12px</span>
-            </div>
-          </section>
-        </div>
-
-        <div className="mt-8 grid grid-cols-[1.1fr_2.1fr] gap-8 border-t border-[#d7d6d2] pt-8">
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">08</span>
-              <span>Inputs</span>
-            </div>
-            <div className="space-y-4">
-              <div className="flex h-11 items-center rounded-[8px] border border-[#d4d8d5] bg-white px-4 text-[0.82rem] text-[#667a77] shadow-[0_0_0_1px_rgba(17,27,24,0.02)]">
-                Search anything...
-              </div>
-              <div className="flex h-11 items-center rounded-[8px] border border-[#d4d8d5] bg-white px-4 text-[0.82rem] text-[#465f5b]">
-                Select
-              </div>
-              <div className="flex h-11 items-center rounded-[8px] border border-[#d4d8d5] bg-[#f7f7f5] px-4 text-[0.82rem] text-[#465f5b]">
-                Most Relevant
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">09</span>
-              <span>Badges / Tags</span>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { label: "Video", tone: "bg-[#edf4f1] text-[#0d5d4f]" },
-                { label: "Lesson", tone: "bg-[#edf4f1] text-[#0d5d4f]" },
-                { label: "Popular", tone: "bg-[#0d5d4f] text-white" },
-              ].map((badge) => (
-                <div key={badge.label} className={`flex h-8 items-center justify-center rounded-[5px] px-3 text-[0.64rem] font-medium uppercase tracking-[0.12em] ${badge.tone}`}>
-                  {badge.label}
-                </div>
-              ))}
-            </div>
-          </section>
-        </div>
-
-        <div className="mt-8 grid grid-cols-[1.05fr_2.1fr_1.1fr] gap-8 border-t border-[#d7d6d2] pt-8">
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">10</span>
-              <span>Status / Indicators</span>
-            </div>
-            <div className="space-y-3">
-              {statusLabels.map((label, index) => (
-                <div key={label} className="flex items-center gap-2 text-[0.72rem] text-[#44615d]">
-                  <span className={`inline-block h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-[#0f6c5c]" : index === 1 ? "bg-[#0f6c5c]" : index === 2 ? "bg-[#d8e5df]" : "bg-[#7d8f8b]"}`} />
-                  {label}
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <div className="mb-4 flex items-center gap-3 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#3d534f]">
-              <span className="mr-1">11</span>
-              <span>Progress Bar</span>
-            </div>
-            <div className="mt-5 flex items-center gap-4">
-              <div className="h-3 flex-1 overflow-hidden rounded-full bg-[#dfeae2]">
-                <div className="h-full w-[35%] rounded-full bg-[#0f6c5c]" />
-              </div>
-              <span className="text-[0.7rem] text-[#466761]">35% complete</span>
-            </div>
-          </section>
-
-          <section />
-        </div>
-
-        <div className="mt-8 grid grid-cols-[1fr_1fr_1fr_1fr] gap-4 border-t border-[#d7d6d2] pt-8">
-          <div className="space-y-2">
-            <div className="mb-2 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#465e5b]">Course Card</div>
-            <div className="rounded-[10px] border border-[#d6d6d3] bg-[#f3f3f1] p-4 shadow-[0_1px_0_rgba(10,18,16,0.04)]">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[8px] bg-[#0f6c5c] text-lg font-semibold text-white">N</div>
-              <div className="text-[1.08rem] font-semibold text-[#1d2f2f]">Next.js for Production</div>
-              <p className="mt-2 text-[0.7rem] leading-5 text-[#4f625f]">Build scalable, high-performance web applications with Next.js.</p>
-              <div className="mt-4 flex gap-2 text-[0.62rem] uppercase tracking-[0.12em] text-[#59736f]">
-                <span className="rounded-full bg-[#edf4f1] px-2 py-1">Intermediate</span>
-                <span>8h 24m</span>
-                <span>12 modules</span>
-              </div>
-            </div>
           </div>
-
-          <div className="space-y-2">
-            <div className="mb-2 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#465e5b]">Lesson Card</div>
-            <div className="rounded-[10px] border border-[#d6d6d3] bg-[#f3f3f1] p-4 shadow-[0_1px_0_rgba(10,18,16,0.04)]">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="rounded-[4px] bg-[#edf4f1] px-2 py-1 text-[0.64rem] font-medium uppercase tracking-[0.12em] text-[#0d5d4f]">Video</span>
-                <span className="text-[0.64rem] uppercase tracking-[0.12em] text-[#5c7a75]">2:45m</span>
-              </div>
-              <div className="text-[1.1rem] font-semibold leading-6 text-[#1d2f2f]">Data Fetching in Server Components</div>
-              <p className="mt-2 text-[0.72rem] leading-5 text-[#4f625f]">Learn how to fetch data on the server using async and wait and Next.js best practices.</p>
-              <div className="mt-4 text-[0.7rem] uppercase tracking-[0.12em] text-[#4c6a65]">Lesson 5.1 • 2:45m</div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="mb-2 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#465e5b]">Lesson Card</div>
-            <div className="rounded-[10px] border border-[#d6d6d3] bg-[#f3f3f1] p-4 shadow-[0_1px_0_rgba(10,18,16,0.04)]">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="rounded-[4px] bg-[#edf4f1] px-2 py-1 text-[0.64rem] font-medium uppercase tracking-[0.12em] text-[#0d5d4f]">Lesson</span>
-                <span className="text-[0.64rem] uppercase tracking-[0.12em] text-[#5c7a75]">Watch</span>
-              </div>
-              <div className="text-[1.1rem] font-semibold leading-6 text-[#1d2f2f]">Data Fetching &amp; Caching</div>
-              <p className="mt-2 text-[0.72rem] leading-5 text-[#4f625f]">Explore different data fetching methods and learn how to cache and revalidate data effectively.</p>
-              <div className="mt-4 text-[0.7rem] uppercase tracking-[0.12em] text-[#4c6a65]">Module 5 • View lesson</div>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="mb-2 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#465e5b]">Resource Card</div>
-            <div className="rounded-[10px] border border-[#d6d6d3] bg-[#f3f3f1] p-4 shadow-[0_1px_0_rgba(10,18,16,0.04)]">
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#d1ddd8] bg-white text-[#0d5d4f]">⌂</div>
-                <span className="rounded-[4px] bg-[#edf4f1] px-2 py-1 text-[0.62rem] uppercase tracking-[0.12em] text-[#0d5d4f]">PDF</span>
-              </div>
-              <div className="text-[1rem] font-semibold leading-5 text-[#1d2f2f]">Caching and Revalidation Guide</div>
-              <p className="mt-2 text-[0.68rem] leading-5 text-[#4f625f]">Deep dive into Next.js caching strategies and revalidation best practices.</p>
-              <div className="mt-4 flex items-center justify-between text-[0.68rem] uppercase tracking-[0.12em] text-[#4c6a65]">
-                <span>1.2 MB</span>
-                <span>↓</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 grid grid-cols-[1.3fr_1.5fr_1.1fr] gap-6 border-t border-[#d7d6d2] pt-8">
-          <div className="space-y-2">
-            <div className="mb-2 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#465e5b]">Navigation</div>
-            <div className="flex items-center gap-3 rounded-[8px] border border-[#d9d9d4] bg-[#f6f6f3] p-3 text-[0.8rem] text-[#2f4340]">
-              <MinervaMark />
-              <span className="font-medium">minerva</span>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="mb-2 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#465e5b]">Breadcrumbs</div>
-            <div className="flex items-center gap-2 text-[0.75rem] text-[#526d6a]">
-              <span>All Courses</span>
-              <span>›</span>
-              <span>Next.js for Production</span>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="mb-2 text-[0.72rem] font-medium uppercase tracking-[0.2em] text-[#465e5b]">Pagination</div>
-            <div className="flex items-center gap-2 text-[0.7rem] text-[#556e6b]">
-              <button type="button" className="h-8 w-8 rounded-[6px] border border-[#d5d9d7] bg-white">‹</button>
-              <button type="button" className="h-8 w-8 rounded-[6px] bg-[#0f6c5c] text-white">1</button>
-              <button type="button" className="h-8 w-8 rounded-[6px] border border-[#d5d9d7] bg-white">2</button>
-              <button type="button" className="h-8 w-8 rounded-[6px] border border-[#d5d9d7] bg-white">3</button>
-              <button type="button" className="h-8 w-8 rounded-[6px] border border-[#d5d9d7] bg-white">...</button>
-              <button type="button" className="h-8 w-8 rounded-[6px] border border-[#d5d9d7] bg-white">›</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 grid grid-cols-4 gap-4 border-t border-[#d7d6d2] pt-8">
-          {[
-            { title: "Clarify Fit", body: "Every element should be clear, consistent and immediately comprehensible." },
-            { title: "Consistency", body: "Use components and patterns that reinforce a cohesive product experience." },
-            { title: "Focus & Calm", body: "Remove noise and give learners space to focus on what matters most." },
-            { title: "Accessible", body: "Design with accessibility and clarity in mind from the start." },
-          ].map((principle) => (
-            <div key={principle.title} className="flex gap-3 rounded-[10px] border border-[#d9d9d4] bg-[#f6f6f3] p-3">
-              <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-[6px] border border-[#cfd8d5] bg-white text-[#0f6c5c]">✦</div>
-              <div>
-                <div className="text-[0.78rem] font-semibold text-[#1d2c2f]">{principle.title}</div>
-                <p className="mt-1 text-[0.68rem] leading-5 text-[#516c69]">{principle.body}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        </section>
       </div>
     </main>
   );

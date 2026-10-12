@@ -11,7 +11,7 @@ metadata:
 
 # Set up Clerk
 
-Use the [Clerk CLI](https://clerk.com/docs/cli) to add authentication. In agent environments, supported frameworks default to accountless setup: `npx -y clerk@latest init --no-skills` provisions a claimable application and writes temporary development keys without requiring a Clerk account.
+Use the [Clerk CLI](https://clerk.com/docs/cli) to add authentication. In agent environments, supported frameworks default to accountless setup: `npx -y clerk@latest init` provisions a claimable application and writes temporary development keys without requiring a Clerk account.
 
 ## Before you start
 
@@ -21,7 +21,8 @@ Show the user this checklist and wait for a yes:
 Here's what I'll do to get you set up with Clerk.
 
 1. Set up Clerk in this project, or scaffold a new app if this directory is empty.
-2. Start your app with Clerk installed.
+2. Install Clerk's agent skills for the coding agents on this machine, if they aren't installed yet.
+3. Start your app with Clerk installed.
 
 Shall I proceed?
 ```
@@ -41,7 +42,7 @@ See the [migration guide](https://clerk.com/docs/guides/development/migrating/ov
 
 If the project already uses Clerk, skip `init` in Steps 1a and 1b: a signed-out agent run could create another application and replace the project's Clerk keys. If Clerk already works and the user asked for setup, report that no setup is needed. If the user reports missing keys, restore them through the existing-application branch below. If inspection finds missing provider, middleware, or auth routes, add only those pieces from the matching quickstart in Step 2. Never create a replacement application.
 
-Inspect its Clerk package versions before changing anything and use the [clerk](../clerk/SKILL.md) skill's version table to identify its SDK generation. Preserve that generation unless the user asks to upgrade it, and apply these differences in every step below for Core 2 projects:
+Inspect its Clerk package versions before changing anything and use the version table in the [clerk skill](https://clerk.com/.well-known/skills/clerk/SKILL.md) to identify its SDK generation. Preserve that generation unless the user asks to upgrade it, and apply these differences in every step below for Core 2 projects:
 
 - React and Expo use `@clerk/clerk-react` and `@clerk/clerk-expo` instead of `@clerk/react` and `@clerk/expo`.
 - Control components are `<SignedIn>` and `<SignedOut>` instead of `<Show>`.
@@ -82,20 +83,20 @@ Only when the user needs production keys, use `npx -y clerk@latest env pull --in
 For a project that does not already use Clerk, run from the project root:
 
 ```bash
-npx -y clerk@latest init --no-skills
+npx -y clerk@latest init
 ```
 
-`init` detects the framework and package manager, installs the SDK, and configures the provider, middleware, auth routes, and environment. `--no-skills` skips the CLI's automatic global skill installation; this skill already provides the setup guidance. Don't pass `--framework` or `--pm` unless asked. Add `--app <application_id>` only when the user selected an application in the optional branch above.
+`init` detects the framework and package manager, installs the SDK, and configures the provider, middleware, auth routes, and environment. It also installs Clerk's agent skills globally. If the user declined them, or they're already available to you, such as when you loaded this as the `clerk-setup` skill, add `--no-skills` to skip that step. Don't pass `--framework` or `--pm` unless asked. Add `--app <application_id>` only when the user selected an application in the optional branch above.
 
 ## Step 1b: Empty directory
 
 Ask which framework and package manager to use, defaulting to Next.js and npm:
 
 ```bash
-npx -y clerk@latest init --framework <framework> --pm <package-manager> --no-skills
+npx -y clerk@latest init --framework <framework> --pm <package-manager>
 ```
 
-`init` creates the app in a new subdirectory, such as `my-clerk-next-app`, not in the current directory. Run the remaining steps from that subdirectory.
+`init` creates the app in a new subdirectory, such as `my-clerk-next-app`, not in the current directory. Run the remaining steps from that subdirectory. As in Step 1a, add `--no-skills` if Clerk's skills are already available to you or the user declined them.
 
 `init` can create Next.js, React Router, Astro, Nuxt, TanStack Start, React, Vue, JavaScript/Vite, and Expo apps. For Express, Fastify, iOS, or Android, create the project with that platform's own tooling first, then follow Step 1a.
 
@@ -163,6 +164,8 @@ npx -y clerk@latest doctor
 ```
 
 Then start the app, confirm the auth controls render, and fix anything the CLI reports.
+
+Bot protection can block sign-ups in browsers you automate. If you test a new accountless app in one, run `npx -y clerk@latest users create --email <unique>+clerk_test@example.com --password <random-16-char-alphanumeric> --yes`, then sign in. If asked for a verification code, enter 424242. Tell the user you created this test user. For an existing app, ask the user before creating users. To test sign-up, use [`@clerk/testing`](https://clerk.com/docs/guides/development/testing/playwright/overview.md).
 
 ## Step 5: If using shadcn/ui
 
