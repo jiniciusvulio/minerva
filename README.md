@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Minerva
 
-## Getting Started
+Minerva is a learning platform with a Next.js web app and an independently deployed Sanity Studio.
 
-First, run the development server:
+## Workspaces
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Web app: repository root
+- Sanity Studio: `studio/`
+
+Install dependencies in each workspace:
+
+```sh
+npm install
+npm --prefix studio install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.example` to `.env.local` for the web app and copy its Studio variables into `studio/.env.local`. Set the Sanity project ID and dataset for both workspaces and keep `SANITY_API_READ_TOKEN` server-only. The Studio CLI reads `SANITY_STUDIO_PROJECT_ID` and `SANITY_STUDIO_DATASET`; the web app reads `NEXT_PUBLIC_SANITY_PROJECT_ID` and `NEXT_PUBLIC_SANITY_DATASET`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run the web app and Studio separately:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```sh
+npm run dev
+npm run studio:dev
+```
 
-## Learn More
+## Sanity content
 
-To learn more about Next.js, take a look at the following resources:
+The Studio authors courses, lessons, instructors, and categories. Modules and learning outcomes are embedded in courses; lesson resources and notes use structured Sanity fields and Portable Text.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Web reads are in `sanity/lib/data.ts` and use a server-only client configured with the private published-dataset read token. GROQ parameters are passed separately from query strings. Current read helpers include:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `getCourses()` and `getCourseBySlug(slug)`
+- `getLessonBySlug(slug)` (including its course via reverse reference)
+- `getInstructorBySlug(slug)`
+- `getCategories()` and `getCategoryBySlug(slug)`
 
-## Deploy on Vercel
+The Studio can generate frontend query types with `npm --prefix studio run typegen`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Validation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```sh
+npm run typecheck
+npm run lint
+npm run build
+npm --prefix studio run typecheck
+npm --prefix studio run build
+```
