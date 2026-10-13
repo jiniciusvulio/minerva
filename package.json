@@ -6,11 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "studio:dev": "npm --prefix studio run dev",
+    "studio:build": "npm --prefix studio run build"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.14",
+    "@sanity/image-url": "^2.1.1",
+    "@portabletext/types": "^4.0.2",
     "next": "16.3.6",
+    "next-sanity": "^13.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
